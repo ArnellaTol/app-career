@@ -23,7 +23,7 @@ def load_jsonl_files(folder_path):
                         print(f"Error decoding line in file: {filename}")
     return all_records
 
-rag_data = load_jsonl_files("/Users/arnellatolegen/Desktop/jsonl datafiles")
+rag_data = load_jsonl_files("./jsonl datafiles")
 
 
 @st.cache_resource(show_spinner="Logging into Hugging Face...")
