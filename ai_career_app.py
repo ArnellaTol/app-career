@@ -28,8 +28,8 @@ rag_data = load_jsonl_files("./jsonl datafiles")
 
 @st.cache_resource(show_spinner="Logging into Hugging Face...")
 def login_hf():
-    os.environ["HF_TOKEN"] = "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"
-    login(token=os.environ["HF_TOKEN"])
+    login(token=st.secrets["HF_TOKEN"])
+
 
 login_hf()
 
