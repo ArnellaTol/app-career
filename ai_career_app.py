@@ -26,10 +26,8 @@ def load_jsonl_files(folder_path):
 rag_data = load_jsonl_files("./jsonl datafiles")
 
 
-@st.cache_resource(show_spinner="Logging into Hugging Face...")
 def login_hf():
     login(token=st.secrets["HF_TOKEN"])
-
 
 login_hf()
 
