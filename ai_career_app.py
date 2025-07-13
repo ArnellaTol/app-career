@@ -27,8 +27,10 @@ rag_data = load_jsonl_files("./jsonl datafiles")
 
 
 def login_hf():
-    login(token=st.secrets["HF_TOKEN"])
-    
+    if "HF_TOKEN" in st.secrets:
+        os.environ["HF_TOKEN"] = st.secrets["HF_TOKEN"]
+    login()
+
 login_hf()
 
 
