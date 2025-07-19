@@ -93,11 +93,11 @@ def generate_career_advice(question: str) -> str:
     messages = [
         {"role": "system", "content": 
          f"""You are a career advisor for high school students. 
-         Your only task is to select 3 to 5 career paths that are the best possible match for the student's stated interests, strengths, and dislikes."""},
+         Student can ask different questions. In case of asking career paths suggestions, you need to select 3 career paths that are the best possible match for the student's stated interests, strengths, and dislikes.
+         Keep the total response under 100 words. Be focused and relevant."""},
         {"role": "user", "content": question}
     ]
-    client = InferenceClient(
-    # provider="fireworks-ai",  
+    client = InferenceClient( 
     provider="auto", 
     api_key=st.secrets["HF_TOKEN"])
 
@@ -110,7 +110,7 @@ def generate_career_advice(question: str) -> str:
 
     answer = response.choices[0].message.content
 
-    return answer#.strip().split("\n")[0]
+    return answer
 
 
 # def generate_rag_career_advice(question: str, tokenizer, model, embedder, annoy_index, texts: list, k: int = 5) -> str:
@@ -171,20 +171,20 @@ You have access to relevant background knowledge about career paths, student pre
 Context:
 {context}
 
-Your only task is to select NO MORE THAN ONE or maximum TWO career paths that are the best possible match for the student's stated interests, strengths, and dislikes.
-DO NOT GENERATE CONTINUING DIALOGUE, ANSWER TO STUDENT'S QUESTION ONLY ONCE.
+Your only task is to select 3 career paths that are the best possible match for the student's stated interests, strengths, and dislikes.
 Strict instructions:
 - Base your suggestions strictly on the student’s message. Do not invent or assume anything not mentioned.
 - Recommend only career paths that clearly align with what the student enjoys and is good at, and that avoid what they dislike or find difficult.
-- For each suggested path, explain in 1–2 sentences why it fits this student specifically.
+- For each suggested path, explain in 3-4 sentences why it fits this student specifically.
 - Do not give general advice or list unrelated options "just in case."
-- Do not exceed 2 suggestions. Do not use bullet points or numbered lists.
-- Keep the total response under 100 words. Be focused and relevant."""},
+- Keep the total response under 350 words. Be focused and relevant.
+
+If student asks other questions, answer them directly (still use the background context) and do not generate career paths if not asked.
+"""},
         {"role": "user", "content": question}
     ]
 
     client = InferenceClient(
-    # provider="fireworks-ai", 
     provider="auto",  
     api_key=st.secrets["HF_TOKEN"])
 
