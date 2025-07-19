@@ -90,11 +90,21 @@ School Career Advisor’s answer:
     # generated = outputs[0][inputs['input_ids'].shape[-1]:]
     # response = tokenizer.decode(generated, skip_special_tokens=True)
 
-    client = InferenceClient(model="meta-llama/Llama-3.2-1B")
+    # client = InferenceClient(model="meta-llama/Llama-3.2-1B")
+    # response = client.text_generation(prompt, max_new_tokens=300)
 
-    response = client.text_generation(prompt, max_new_tokens=300)
+    client = InferenceClient(model="meta-llama/Meta-Llama-3-8B-Instruct")
 
-    return response.strip().split("\n")[0]
+    answer = client.text_generation(
+    prompt,
+    max_new_tokens=100,
+    temperature=0.7,
+    top_p=0.95,
+    do_sample=True,
+    stop_sequences=["</s>"]
+    )
+
+    return answer.strip().split("\n")[0]
 
 
 # def generate_rag_career_advice(question: str, tokenizer, model, embedder, annoy_index, texts: list, k: int = 5) -> str:
@@ -145,9 +155,20 @@ Career Advisor’s answer:
 
     #     answer = tokenizer.decode(outputs[0][inputs['input_ids'].shape[-1]:], skip_special_tokens=True).strip()
     
-    client = InferenceClient(model="meta-llama/Llama-3.2-1B")
+    # client = InferenceClient(model="meta-llama/Llama-3.2-1B")
+    # answer = client.text_generation(prompt, max_new_tokens=300)
+    
+    client = InferenceClient(model="meta-llama/Meta-Llama-3-8B-Instruct")
 
-    answer = client.text_generation(prompt, max_new_tokens=300)
+    answer = client.text_generation(
+    prompt,
+    max_new_tokens=300,
+    temperature=0.7,
+    top_p=0.95,
+    do_sample=True,
+    stop_sequences=["</s>"]
+    )
+    
     if not answer.endswith("."):
         last_period = answer.rfind(".")
         if last_period != -1:
