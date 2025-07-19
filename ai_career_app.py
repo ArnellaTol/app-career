@@ -97,7 +97,8 @@ def generate_career_advice(question: str) -> str:
         {"role": "user", "content": question}
     ]
     client = InferenceClient(
-    provider="fireworks-ai",   
+    # provider="fireworks-ai",  
+    provider="auto", 
     api_key=st.secrets["HF_TOKEN"])
 
     response = client.chat.completions.create(
@@ -183,7 +184,8 @@ Strict instructions:
     ]
 
     client = InferenceClient(
-    provider="fireworks-ai",   
+    # provider="fireworks-ai", 
+    provider="auto",  
     api_key=st.secrets["HF_TOKEN"])
 
     response = client.chat.completions.create(
