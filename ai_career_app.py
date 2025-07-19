@@ -65,15 +65,15 @@ embedder, annoy_index, texts = build_annoy_index()
 
 # def generate_career_advice(question: str, tokenizer, model) -> str:
 def generate_career_advice(question: str) -> str:
-    prompt = f"""
-You are a career advisor for high school students.
-Your only task is to select 3 to 5 career paths that are the best possible match for the student's stated interests, strengths, and dislikes.
+#     prompt = f"""
+# You are a career advisor for high school students.
+# Your only task is to select 3 to 5 career paths that are the best possible match for the student's stated interests, strengths, and dislikes.
 
-Student’s message:
-{question}
+# Student’s message:
+# {question}
 
-School Career Advisor’s answer:
-"""
+# School Career Advisor’s answer:
+# """
     # inputs = tokenizer(prompt, return_tensors="pt")
 
     # with torch.no_grad():
@@ -90,19 +90,14 @@ School Career Advisor’s answer:
     # generated = outputs[0][inputs['input_ids'].shape[-1]:]
     # response = tokenizer.decode(generated, skip_special_tokens=True)
 
-    # client = InferenceClient(model="meta-llama/Llama-3.2-1B")
-    # response = client.text_generation(prompt, max_new_tokens=300)
-
+    messages = [
+        {"role": "system", "content": 
+         f"""You are a career advisor for high school students. 
+         Your only task is to select 3 to 5 career paths that are the best possible match for the student's stated interests, strengths, and dislikes."""},
+        {"role": "user", "content": question}
+    ]
     client = InferenceClient(model="meta-llama/Meta-Llama-3-8B-Instruct")
-
-    answer = client.text_generation(
-    prompt,
-    max_new_tokens=100,
-    temperature=0.7,
-    top_p=0.95,
-    do_sample=True,
-    stop_sequences=["</s>"]
-    )
+    answer = client.chat(messages, max_new_tokens=100, temperature=0.7)
 
     return answer.strip().split("\n")[0]
 
@@ -155,20 +150,30 @@ Career Advisor’s answer:
 
     #     answer = tokenizer.decode(outputs[0][inputs['input_ids'].shape[-1]:], skip_special_tokens=True).strip()
     
-    # client = InferenceClient(model="meta-llama/Llama-3.2-1B")
-    # answer = client.text_generation(prompt, max_new_tokens=300)
-    
-    client = InferenceClient(model="meta-llama/Meta-Llama-3-8B-Instruct")
+    messages = [
+        {"role": "system", "content": 
+         f"""
+You are a career advisor for high school students.
 
-    answer = client.text_generation(
-    prompt,
-    max_new_tokens=300,
-    temperature=0.7,
-    top_p=0.95,
-    do_sample=True,
-    stop_sequences=["</s>"]
-    )
-    
+You have access to relevant background knowledge about career paths, student preferences, and educational strategies, shown below.
+
+Context:
+{context}
+
+Your only task is to select NO MORE THAN ONE or maximum TWO career paths that are the best possible match for the student's stated interests, strengths, and dislikes.
+DO NOT GENERATE CONTINUING DIALOGUE, ANSWER TO STUDENT'S QUESTION ONLY ONCE.
+Strict instructions:
+- Base your suggestions strictly on the student’s message. Do not invent or assume anything not mentioned.
+- Recommend only career paths that clearly align with what the student enjoys and is good at, and that avoid what they dislike or find difficult.
+- For each suggested path, explain in 1–2 sentences why it fits this student specifically.
+- Do not give general advice or list unrelated options "just in case."
+- Do not exceed 2 suggestions. Do not use bullet points or numbered lists.
+- Keep the total response under 100 words. Be focused and relevant."""},
+        {"role": "user", "content": question}
+    ]
+    client = InferenceClient(model="meta-llama/Meta-Llama-3-8B-Instruct")
+    answer = client.chat(messages, max_new_tokens=300, temperature=0.7)
+
     if not answer.endswith("."):
         last_period = answer.rfind(".")
         if last_period != -1:
