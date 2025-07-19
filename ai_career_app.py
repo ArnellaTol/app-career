@@ -43,23 +43,36 @@ login_hf()
 
 
 @st.cache_resource
-def build_annoy_index():
+# def build_annoy_index():
+#     embedder = SentenceTransformer("all-MiniLM-L6-v2")
+#     texts = [item["text"] for item in rag_data]
+#     sources = [item["source"] for item in rag_data]
+#     embeddings = embedder.encode(texts, convert_to_numpy=True)
+
+#     dimension = embeddings.shape[1]
+#     annoy_index = AnnoyIndex(dimension, 'angular')
+
+#     for i, vec in enumerate(embeddings):
+#         annoy_index.add_item(i, vec)
+
+#     annoy_index.build(10)
+#     annoy_index.save("index.ann")
+#     return embedder, annoy_index, texts
+
+# embedder, annoy_index, texts = build_annoy_index()
+
+@st.cache_resource
+def load_annoy_index():
     embedder = SentenceTransformer("all-MiniLM-L6-v2")
-    texts = [item["text"] for item in rag_data]
-    sources = [item["source"] for item in rag_data]
-    embeddings = embedder.encode(texts, convert_to_numpy=True)
+    texts = [item["text"] for item in rag_data]  
+    dimension = 384 
 
-    dimension = embeddings.shape[1]
     annoy_index = AnnoyIndex(dimension, 'angular')
+    annoy_index.load("index.ann")  
 
-    for i, vec in enumerate(embeddings):
-        annoy_index.add_item(i, vec)
-
-    annoy_index.build(10)
-    
     return embedder, annoy_index, texts
 
-embedder, annoy_index, texts = build_annoy_index()
+embedder, annoy_index, texts = load_annoy_index()
 
 
 
