@@ -104,11 +104,11 @@ def generate_career_advice(question: str) -> str:
     response = client.chat.completions.create(
     model="meta-llama/Meta-Llama-3-8B-Instruct",
     messages=messages,
-    max_tokens=100,
+    max_tokens=350,
     temperature=0.7
     )
 
-    answer = response.choices[0].message
+    answer = response.choices[0].message.content
 
     return answer#.strip().split("\n")[0]
 
@@ -191,11 +191,11 @@ Strict instructions:
     response = client.chat.completions.create(
     model="meta-llama/Meta-Llama-3-8B-Instruct",
     messages=messages,
-    max_tokens=300,
+    max_tokens=500,
     temperature=0.7
     )
 
-    answer = response.choices[0].message
+    answer = response.choices[0].message.content
 
     if not answer.endswith("."):
         last_period = answer.rfind(".")
