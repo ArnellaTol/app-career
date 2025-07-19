@@ -97,17 +97,17 @@ def generate_career_advice(question: str) -> str:
         {"role": "user", "content": question}
     ]
     client = InferenceClient(
-    provider="hf-inference",   
+    provider="fireworks-ai",   
     api_key=st.secrets["HF_TOKEN"])
 
     response = client.chat.completions.create(
     model="meta-llama/Meta-Llama-3-8B-Instruct",
     messages=messages,
-    max_tokens=300,
+    max_tokens=100,
     temperature=0.7
     )
 
-    answer = response.choices[0].message.content
+    answer = response.choices[0].message
 
     return answer#.strip().split("\n")[0]
 
@@ -120,29 +120,29 @@ def generate_rag_career_advice(question: str, embedder, annoy_index, texts: list
     context_docs = [texts[i] for i in indices]
 
     context = "\n\n".join(context_docs)
-    prompt = f"""
-You are a career advisor for high school students.
+#     prompt = f"""
+# You are a career advisor for high school students.
 
-You have access to relevant background knowledge about career paths, student preferences, and educational strategies, shown below.
+# You have access to relevant background knowledge about career paths, student preferences, and educational strategies, shown below.
 
-Context:
-{context}
+# Context:
+# {context}
 
-Your only task is to select NO MORE THAN ONE or maximum TWO career paths that are the best possible match for the student's stated interests, strengths, and dislikes.
-DO NOT GENERATE CONTINUING DIALOGUE, ANSWER TO STUDENT'S QUESTION ONLY ONCE.
-Strict instructions:
-- Base your suggestions strictly on the student’s message. Do not invent or assume anything not mentioned.
-- Recommend only career paths that clearly align with what the student enjoys and is good at, and that avoid what they dislike or find difficult.
-- For each suggested path, explain in 1–2 sentences why it fits this student specifically.
-- Do not give general advice or list unrelated options "just in case."
-- Do not exceed 2 suggestions. Do not use bullet points or numbered lists.
-- Keep the total response under 100 words. Be focused and relevant.
+# Your only task is to select NO MORE THAN ONE or maximum TWO career paths that are the best possible match for the student's stated interests, strengths, and dislikes.
+# DO NOT GENERATE CONTINUING DIALOGUE, ANSWER TO STUDENT'S QUESTION ONLY ONCE.
+# Strict instructions:
+# - Base your suggestions strictly on the student’s message. Do not invent or assume anything not mentioned.
+# - Recommend only career paths that clearly align with what the student enjoys and is good at, and that avoid what they dislike or find difficult.
+# - For each suggested path, explain in 1–2 sentences why it fits this student specifically.
+# - Do not give general advice or list unrelated options "just in case."
+# - Do not exceed 2 suggestions. Do not use bullet points or numbered lists.
+# - Keep the total response under 100 words. Be focused and relevant.
 
-Student’s message:
-{question}
+# Student’s message:
+# {question}
 
-Career Advisor’s answer:
-"""
+# Career Advisor’s answer:
+# """
 
     # inputs = tokenizer(prompt, return_tensors="pt")
     # with torch.no_grad():
@@ -183,7 +183,7 @@ Strict instructions:
     ]
 
     client = InferenceClient(
-    provider="hf-inference",   
+    provider="fireworks-ai",   
     api_key=st.secrets["HF_TOKEN"])
 
     response = client.chat.completions.create(
@@ -193,7 +193,7 @@ Strict instructions:
     temperature=0.7
     )
 
-    answer = response.choices[0].message.content
+    answer = response.choices[0].message
 
     if not answer.endswith("."):
         last_period = answer.rfind(".")
