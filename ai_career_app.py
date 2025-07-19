@@ -96,10 +96,20 @@ def generate_career_advice(question: str) -> str:
          Your only task is to select 3 to 5 career paths that are the best possible match for the student's stated interests, strengths, and dislikes."""},
         {"role": "user", "content": question}
     ]
-    client = InferenceClient(model="meta-llama/Meta-Llama-3-8B-Instruct")
-    answer = client.chat(messages, max_new_tokens=100, temperature=0.7)
+    client = InferenceClient(
+    provider="hf-inference",   
+    api_key=st.secrets["HF_TOKEN"])
 
-    return answer.strip().split("\n")[0]
+    response = client.chat.completions.create(
+    model="meta-llama/Meta-Llama-3-8B-Instruct",
+    messages=messages,
+    max_tokens=300,
+    temperature=0.7
+    )
+
+    answer = response.choices[0].message.content
+
+    return answer#.strip().split("\n")[0]
 
 
 # def generate_rag_career_advice(question: str, tokenizer, model, embedder, annoy_index, texts: list, k: int = 5) -> str:
@@ -171,8 +181,19 @@ Strict instructions:
 - Keep the total response under 100 words. Be focused and relevant."""},
         {"role": "user", "content": question}
     ]
-    client = InferenceClient(model="meta-llama/Meta-Llama-3-8B-Instruct")
-    answer = client.chat(messages, max_new_tokens=300, temperature=0.7)
+
+    client = InferenceClient(
+    provider="hf-inference",   
+    api_key=st.secrets["HF_TOKEN"])
+
+    response = client.chat.completions.create(
+    model="meta-llama/Meta-Llama-3-8B-Instruct",
+    messages=messages,
+    max_tokens=300,
+    temperature=0.7
+    )
+
+    answer = response.choices[0].message.content
 
     if not answer.endswith("."):
         last_period = answer.rfind(".")
